@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Infinite Dungeons! Map Test</title>
+    <link rel="icon" type="image/vnd.microsoft.icon" href="/code/loc/favicon.ico"/>
+    <link rel='stylesheet' href='/code/loc/Canvassa/loc.css'/>
+
+    <script data-dojo-config="parseOnLoad: false, isDebug: false, modulePaths:{ 'loc': '/code/loc/Canvassa' }"
+        src="http://o.aolcdn.com/dojo/1.6/dojo/dojo.js"></script>
+        <!--src="/js/dojo-release-1.6.1-src/dojo/dojo.js"></script-->
+
+    <link rel="stylesheet" href="/fonts/silkscreen/stylesheet.css" type="text/css" charset="utf-8">
+    <style type="text/css">
+      h1 {
+        font: 60px/68px 'SilkscreenNormal', Arial, sans-serif;
+        letter-spacing: 0;
+        margin: 0; padding: 0;
+        //text-align: center;
+      }
+
+      canvas {
+        border: 6px double black;
+      }
+      #mapCanvas {
+        top: 80px;
+        left: 20px;
+      }
+
+      #tileCanvas {
+        top: 260px;
+        left: 20px;
+        display: none;
+      }
+      #textMap {
+        display: block;
+        font-family: monospace;
+      }
+
+      #floorCanvas {
+        top: 80px;
+        left: 296px;
+      }
+
+      #infoPane {
+        position: absolute;
+        top: 80px;
+        left: 820px;
+      }
+    </style>
+  </head>
+  <body>
+      <h1>Infinite Dungeons!</h1>
+      <div class="map">
+          <canvas id="mapCanvas" width="256" height="160">
+              Browser! Y U NO Canvas?
+          </canvas>
+          <div id="throbber"><img src="res/wait.gif" /><br/>Loading resources...</div>
+          <canvas id="floorCanvas" width="480" height="320"></canvas>
+          <canvas id="tileCanvas" width="144" height="144"></canvas>
+      </div>
+      <div id="infoPane">
+          <button id="btnNewMap">Generate New Map</button><br/>
+
+          <a href="#" id="lnkShowMap">&darr; Show map &darr;</a>
+          <textarea id="textMap" rows='10' cols='20' style="display:none;"></textarea>
+          <a href="#" id="lnkHideMap" style="display:none;">&uarr; Hide map &uarr; </a>
+          <p>Inspired by the Ruby work done by <a href="http://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap">Jamis</a></p>
+      </div>
+  </body>
+  <script src="maze.js"></script>
+  <script src="map.js"></script>
+  <script src="events.js"></script>
+  <script>
+      function showMap() {
+          //dojo.stopEvent(e);
+          dojo.byId('textMap').style.display = '';
+          dojo.byId('lnkHideMap').style.display = '';
+          dojo.byId('lnkShowMap').style.display = 'none';
+      }
+
+      function hideMap(e) {
+          //dojo.stopEvent(e);
+          dojo.byId('textMap').style.display = 'none';
+          dojo.byId('lnkHideMap').style.display = 'none';
+          dojo.byId('lnkShowMap').style.display = '';
+      }
+
+      dojo.addOnLoad(function init_loader(){
+          // hook up events
+          window.events.attach(dojo.byId('btnNewMap'), 'click', newMap);
+          window.events.attach(dojo.byId('lnkShowMap'), 'click', showMap);
+          window.events.attach(dojo.byId('lnkHideMap'), 'click', hideMap);
+
+          // before ANYTHING else, see if we can get a canvas context
+          var big_canvas = dojo.byId('floorCanvas');
+          if (big_canvas.getContext){
+              dojo.require("loc.Preloader");
+              dojo.addOnLoad(preload);
+          } else {
+              // hide the "please wait" throbber
+              dojo.style("throbber","display","none")
+          }
+      }); // end of init_loader()
+
+      function preload() {
+          window.loader = new loc.Preloader({
+            images: {
+              map:   "res/map.png",
+              tiles: "res/underworld_tiles.png",
+              floor: "res/floor.png"
+            },
+            modules: []
+          })
+
+          if (loader.ready()) {
+              init_map();
+              delete window.loader;
+          } else {
+              var listener = dojo.subscribe("loc.Preloader.onReady", function() {
+                  dojo.unsubscribe(listener);
+                  init_map();
+                  delete window.loader;
+              });
+          }
+      } // end of preload()
+
+      function init_map() {
+          window.map = new Map();
+          map.init({
+              mapCanvasID: "mapCanvas",
+              mapImg: window.imageCache.getImage("map"),
+              floorCanvasID: "floorCanvas",
+              floorImg: window.imageCache.getImage("floor"),
+              tileImg: window.imageCache.getImage("tiles"),
+              scale: 2
+          });
+          //    tileCanvasID: "tileCanvas",
+
+          // hide the "please wait" throbber
+          dojo.style("throbber","display","none")
+
+          // hook up the keyboard event handlers for player input
+          dojo.connect(window, "onkeydown", handle_keydown);
+          dojo.connect(window, "onkeyup", handle_keyup);
+
+          map.refreshTiles();
+          newMap();
+      }
+
+      function newMap() {
+          map.generate();
+          dojo.byId('textMap').value = map.dump(map);
+          map.goto(3,7);
+      }
+
+      /* handle user input/controls */
+      var isIE = navigator.appName.toLowerCase().indexOf("explorer") > -1;
+      handle_keydown = function(e){
+          var ev = isIE?event:e;
+
+          switch(ev.keyCode){
+              case 39: // right
+                  map.east();
+                  break;
+              case 37: // left
+                  map.west();
+                  break;
+              case 38: // up
+                  map.north();
+                  break;
+              case 40: // down
+                  map.south();
+                  break;
+          }
+      }
+      handle_keyup = function(e){
+          var ev = isIE?event:e;
+          //mapper.keyUp(ev.keyCode);
+      }
+  </script>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+        <title>ID!</title>
+        <link rel="icon" type="image/vnd.microsoft.icon" href="/code/loc/favicon.ico"/>
+        <link rel='stylesheet' href='/code/loc/Canvassa/loc.css'/>
+
+        <link rel="stylesheet" href="/fonts/silkscreen/stylesheet.css" type="text/css" charset="utf-8">
+        <style type="text/css" media="screen">
+            h1 {
+                font: 60px/68px 'SilkscreenNormal', Arial, sans-serif;
+                letter-spacing: 0;
+                text-align: center;
+            }
+
+            #main {
+                width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div id="main">
+            <h1>Infinite Dungeon!</h1>
+            <p>TODOs:</p>
+            <div class="easy-list" id="quicklinks">
+                - <a href="map_test.html"><s>maze generation</s></a>
+                - pull in & update several Canvassa classes:
+                  - Monsters
+                  - Player
+                  - Map
+                - HTML5 audio for music / SFX
+            </div>
+        </div>
+    </body>
+    <script src="/js/easylist.js"></script>
+    <script>
+          // find and operate on any easy-lists in the current page
+          window.listify(document.getElementById('quicklinks'));
+    </script>
+</html>
