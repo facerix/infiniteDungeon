@@ -113,6 +113,7 @@ var Map = function(){
 
         generate: function map_generate(w,h) {
             mapdata = getNewMap(w,h);
+            this.refreshTiles();
         },
 
         dump: function map_dump() {
