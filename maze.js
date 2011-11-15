@@ -36,10 +36,10 @@ m = [
 // --------------------------------------------------------------------
 
 var N = 1, S = 2, E = 4, W = 8,
-DIRECTIONS = { N: 1, S:  2, E:  4, W: 8 },
-DX         = { E: 1, W: -1, N:  0, S: 0 },
-DY         = { E: 0, W:  0, N: -1, S: 1 },
-OPPOSITE   = { E: W, W:  E, N:  S, S: N }
+    DIRECTIONS = { N: 1, S:  2, E:  4, W: 8 },
+    DX         = { E: 1, W: -1, N:  0, S: 0 },
+    DY         = { E: 0, W:  0, N: -1, S: 1 },
+    OPPOSITE   = { E: W, W:  E, N:  S, S: N }
 
 function shuffle(array)
 { // from http://stackoverflow.com/questions/5150665/generate-random-list-of-unique-rows-columns-javascript
@@ -59,9 +59,9 @@ function carve_passages_from(cx, cy, grid) {
         var nx = cx + DX[dir];
         var ny = cy + DY[dir];
 
-        if ((ny >= 0 && ny <= grid.length-1) && (nx >= 0 && nx <= grid[ny].length-1) && (grid[ny][nx] == 0)) {
-            grid[cy][cx] |= DIRECTIONS[dir];
-            grid[ny][nx] |= OPPOSITE[dir];
+        if ((ny >= 0 && ny <= grid.length-1) && (nx >= 0 && nx <= grid[ny].length-1) && (grid[ny][nx].d == 0)) {
+            grid[cy][cx].d |= DIRECTIONS[dir];
+            grid[ny][nx].d |= OPPOSITE[dir];
 
             carve_passages_from(nx, ny, grid)
         }
@@ -72,22 +72,22 @@ function carve_passages_from(cx, cy, grid) {
 // 4. A simple routine to emit the maze as ASCII
 // --------------------------------------------------------------------
 
-String.prototype.repeat = function(num) {
-    return new Array(isNaN(num)? 1 : ++num).join(this);
+function _repeat(str, num) {
+    return new Array(isNaN(num)? 1 : ++num).join(str);
 }
 
 function dumpMap(g) {
     var height = g.length,
         width = g[0].length,
         line = null,
-        output = " " + "_".repeat(width * 2 - 1);
+        output = " " + _repeat("_", width * 2 - 1);
 
     for (var y=0; y<height; y++) {
         line = "\n|";
         for (var x=0; x<width; x++) {
-            line += ((g[y][x] & S) != 0) ? " " : "_";
-            if ((g[y][x] & E) != 0) {
-                line += (((g[y][x] | g[y][x+1]) & S) != 0) ? " " : "_";
+            line += ((g[y][x].d & S) != 0) ? " " : "_";
+            if ((g[y][x].d & E) != 0) {
+                line += (((g[y][x].d | g[y][x+1].d) & S) != 0) ? " " : "_";
             } else {
                 line += "|";
             }
@@ -100,10 +100,10 @@ function dumpMap(g) {
 
 function getExits(roomDef) {
     return exits = {
-        'N': (roomDef & N),
-        'S': (roomDef & S),
-        'E': (roomDef & E),
-        'W': (roomDef & W)
+        'N': (roomDef.d & N),
+        'S': (roomDef.d & S),
+        'E': (roomDef.d & E),
+        'W': (roomDef.d & W)
     };
 }
 
@@ -115,7 +115,7 @@ function getNewMap(width, height) {
     for (var x=0; x<height; x++) {
         grid[x] = [];
         for (var y=0; y<width; y++) {
-            grid[x][y] = 0;
+            grid[x][y] = {d:0};
         }
     }
 

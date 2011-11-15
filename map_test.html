@@ -6,8 +6,8 @@
     <link rel='stylesheet' href='/code/loc/Canvassa/loc.css'/>
 
     <script data-dojo-config="parseOnLoad: false, isDebug: false, modulePaths:{ 'loc': '/code/loc/Canvassa' }"
-        src="http://o.aolcdn.com/dojo/1.6/dojo/dojo.js"></script>
-        <!--src="/js/dojo-release-1.6.1-src/dojo/dojo.js"></script-->
+        src="/js/dojo-release-1.6.1-src/dojo/dojo.js"></script>
+        <!--src="http://o.aolcdn.com/dojo/1.6/dojo/dojo.js"></script-->
 
     <link rel="stylesheet" href="/fonts/silkscreen/stylesheet.css" type="text/css" charset="utf-8">
     <style type="text/css">
@@ -26,17 +26,37 @@
         left: 20px;
       }
 
-      #tileCanvas {
-        top: 260px;
-        left: 20px;
-        display: none;
+      #messages {
+        font: 8pt 'SilkscreenNormal', Arial, sans-serif;
+        border: 6px double black;
+        background-color: black;
+        color: white;
+
+        position: absolute;
+        top: 260px; left: 20px;
+        height: 136px; width: 252px;
       }
+      #message_fader {
+        border: none;
+
+        position: absolute;
+        top: 260px; left: 20px;
+        height: 148px; width: 264px;
+
+        background-color: transparent;
+        background-image:    -moz-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,1));
+        background-image:      -o-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,1));
+        background-image:        -webkit-gradient(linear,left top,left bottom,color-stop(0, rgba(0,0,0,0)),color-stop(1, rgba(0,0,0,1)));
+        background-image: -webkit-linear-gradient(rgba(0,0,0,0), rgba(0,0,0,1));
+        background-image:         linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0));
+      }
+
       #textMap {
         display: block;
         font-family: monospace;
       }
 
-      #floorCanvas {
+      #floorCanvas, #spriteCanvas {
         top: 80px;
         left: 296px;
       }
@@ -55,8 +75,10 @@
               Browser! Y U NO Canvas?
           </canvas>
           <div id="throbber"><img src="res/wait.gif" /><br/>Loading resources...</div>
+          <div id="messages"></div>
+          <div id="message_fader"></div>
           <canvas id="floorCanvas" width="480" height="320"></canvas>
-          <canvas id="tileCanvas" width="144" height="144"></canvas>
+          <canvas id="spriteCanvas" width="480" height="320"></canvas>
       </div>
       <div id="infoPane">
           <button id="btnNewMap">Generate New Map</button><br/>
@@ -107,7 +129,8 @@
             images: {
               map:   "res/map.png",
               tiles: "res/underworld_tiles.png",
-              floor: "res/floor.png"
+              floor: "res/floor.png",
+              items: "res/items.png"
             },
             modules: []
           })
@@ -131,10 +154,13 @@
               mapImg: window.imageCache.getImage("map"),
               floorCanvasID: "floorCanvas",
               floorImg: window.imageCache.getImage("floor"),
+              spriteCanvasID: "spriteCanvas",
               tileImg: window.imageCache.getImage("tiles"),
-              scale: 2
+              itemsImg: window.imageCache.getImage("items")
           });
-          //    tileCanvasID: "tileCanvas",
+          dojo.connect(map, "message", function(msg) {
+              dojo.byId('messages').innerHTML = msg.replace(/\n/g,"<p/>");
+          });
 
           // hide the "please wait" throbber
           dojo.style("throbber","display","none")
@@ -148,34 +174,42 @@
       }
 
       function newMap() {
+          dojo.byId('messages').value = "";
           map.generate();
           dojo.byId('textMap').value = map.dump(map);
-          map.goto(3,7);
       }
 
-      /* handle user input/controls */
-      var isIE = navigator.appName.toLowerCase().indexOf("explorer") > -1;
-      handle_keydown = function(e){
-          var ev = isIE?event:e;
+        /* handle user input/controls */
+        var isIE = navigator.appName.toLowerCase().indexOf("explorer") > -1;
+        handle_keydown = function(e){
+            var ev = isIE?event:e;
 
-          switch(ev.keyCode){
-              case 39: // right
-                  map.east();
-                  break;
-              case 37: // left
-                  map.west();
-                  break;
-              case 38: // up
-                  map.north();
-                  break;
-              case 40: // down
-                  map.south();
-                  break;
-          }
-      }
-      handle_keyup = function(e){
-          var ev = isIE?event:e;
-          //mapper.keyUp(ev.keyCode);
-      }
-  </script>
+            switch(ev.keyCode){
+                case 39: // right
+                    map.east();
+                    break;
+                case 37: // left
+                    map.west();
+                    break;
+                case 38: // up
+                    map.north();
+                    break;
+                case 40: // down
+                    map.south();
+                    break;
+                case 188:  // < (up)
+                    map.up();
+                    break;
+                case 190:  // > (down)
+                    map.down();
+                    break;
+                default:
+                    //console.log(ev.keyCode);
+            }
+        }
+        handle_keyup = function(e){
+            var ev = isIE?event:e;
+            //mapper.keyUp(ev.keyCode);
+        }
+    </script>
 </html>
