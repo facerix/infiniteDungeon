@@ -91,6 +91,7 @@ var Map = function(){
 
             currentRoom.x += dx;
             currentRoom.y += dy;
+            breadcrumbs[_level][currentRoom.x][currentRoom.y] = true;
 
             // draw new room on map
             _drawRoomOnMap(currentRoom.x, currentRoom.y);
@@ -120,7 +121,11 @@ var Map = function(){
                 y = ((room_y*8) + 9) * scale,
                 roomSize = 6 * scale;
 
-            mapCtx.fillStyle = "rgb(0,0,0)";
+            if (breadcrumbs[_level][room_x][room_y]) {
+                mapCtx.fillStyle = "rgb(0,0,0)";
+            } else {
+                mapCtx.fillStyle = "rgb(32,32,64)";
+            }
 
             // draw the room
             mapCtx.fillRect(x,y,roomSize,roomSize);
@@ -162,9 +167,16 @@ var Map = function(){
     }
 
     function _positionTile(t) {
+        var dx = 24, dy = 24;
+        if (t.w) {
+            dx = (8 - t.w/2) + 24;
+        }
+        if (t.h) {
+            dy = (8 - t.h/2) + 24;
+        }
         return {
-            x: (t.x*16) + 24,
-            y: (t.y*16) + 24
+            x: (t.x*16) + dx,
+            y: (t.y*16) + dy
         }
     }
 
@@ -215,7 +227,7 @@ var Map = function(){
             for (var i in room.items) {
                 itm = room.items[i];
                 c = itemSprites[itm];
-                sq = _positionTile({x:6,y:3});
+                sq = _positionTile({x:6,y:3,w:c.w});
 
                 spriteCtx.drawImage(itemsImg, c.x,c.y,  c.w,c.h, sq.x*scale,sq.y*scale, c.w*scale,c.h*scale);
 
@@ -259,7 +271,7 @@ var Map = function(){
             }
             mapCtx.fillRect(p.x,p.y,dotSize,dotSize);
 
-            mapCtx.fillStyle = "rgb(64,64,64)";
+            mapCtx.fillStyle = "rgb(248,56,0)";
             p = __getMapDotPos(stairRoom.x,stairRoom.y);
             mapCtx.fillRect(p.x,p.y,dotSize,dotSize);
         }
@@ -272,7 +284,13 @@ var Map = function(){
     }
 
     function _newMap(level) {
+        // dump inventory
+        _inventory.compass = false;
+        _inventory.map     = false;
+
         mapdata[level] = getNewMap(8,8);
+
+        breadcrumbs[level] = initMatrix(8,8, false);
 
         // pick random locations for stairs, map, compass, etc
         _placeRoomContents();
@@ -311,13 +329,11 @@ var Map = function(){
     }
 
     function debugData() {
-        return mapdata[_level];
+        return [mapdata[_level], breadcrumbs[_level]];
     }
 
     function generate() {
-        // dump inventory & reset level
-        _inventory.compass = false;
-        _inventory.map     = false;
+        // reset level
         _level = 0;
 
         // generate level 0 map
@@ -452,6 +468,7 @@ var Map = function(){
         if (currentRoom.x == stairRoom.x && currentRoom.y == stairRoom.y) {
             _level += 1;
             _newMap(_level);
+            breadcrumbs[_level][currentRoom.x][currentRoom.y] = true;
             this.refreshTiles();
             exitRoom = {x:currentRoom.x, y:currentRoom.y};
             _drawRoomOnMap(currentRoom.x, currentRoom.y);

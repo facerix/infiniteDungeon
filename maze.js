@@ -107,18 +107,24 @@ function getExits(roomDef) {
     };
 }
 
+
+function initMatrix(w,h, defaultVal) {
+    var grid = [];
+    for (var x=0; x<w; x++) {
+        grid[x] = [];
+        for (var y=0; y<h; y++) {
+            grid[x][y] = dojo.clone(defaultVal);
+        }
+    }
+
+    return grid;
+}
+
 function getNewMap(width, height) {
     width  = width  || 8;
     height = height || 8;
 
-    var grid = [];
-    for (var x=0; x<height; x++) {
-        grid[x] = [];
-        for (var y=0; y<width; y++) {
-            grid[x][y] = {d:0};
-        }
-    }
-
+    var grid = initMatrix(width, height, {d:0});
     carve_passages_from(0, 0, grid);
     return grid;
 }
