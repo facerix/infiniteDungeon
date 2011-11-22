@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Infinite Dungeon: Map Test</title>
+    <title>Infinite Dungeon: Map Quest</title>
     <link rel="icon" type="image/vnd.microsoft.icon" href="/code/loc/favicon.ico"/>
     <link rel='stylesheet' href='/code/loc/Canvassa/loc.css'/>
 
@@ -15,7 +15,14 @@
         font: 60px/68px 'SilkscreenNormal', Arial, sans-serif;
         letter-spacing: 0;
         margin: 0; padding: 0;
-        //text-align: center;
+        /*text-align: center;*/
+        /*margin-left: 70px;*/
+        color: #ec9b00;
+        text-shadow: 1px 1px rgba(255,128,0,.7),
+            2px 2px rgba(0,0,0,.7),
+            3px 3px rgba(0,0,0,.7),
+            4px 4px rgba(0,0,0,.7),
+            5px 5px rgba(0,0,0,.7);
       }
 
       canvas {
@@ -51,85 +58,54 @@
         background-image:         linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0));
       }
 
-      #textMap {
-        display: block;
-        font-family: monospace;
-      }
-
       #floorCanvas, #spriteCanvas {
         top: 80px;
         left: 296px;
       }
 
       #infoPane {
-        position: absolute;
-        top: 80px;
-        left: 820px;
+        position: relative;
+        top: 330px;
       }
     </style>
     </head>
     <body>
-       <h1>Infinite Dungeon!</h1>
-       <div class="map">
-          <canvas id="mapCanvas" width="256" height="160">
-              Browser! Y U NO Canvas?
-          </canvas>
-          <div id="throbber"><img src="res/wait.gif" /><br/>Loading resources...</div>
-          <div id="messages"></div>
-          <!--div id="message_fader"></div-->
-          <canvas id="floorCanvas" width="480" height="320"></canvas>
-          <canvas id="spriteCanvas" width="480" height="320"></canvas>
-       </div>
-       <div id="infoPane">
-          <button id="btnNewMap">Generate New Map</button><br/>
+        <h1>Infinite Dungeon!</h1>
 
-          <a href="#" id="lnkShowMap">&darr; Show map &darr;</a>
-          <textarea id="textMap" rows='10' cols='20' style="display:none;"></textarea>
-          <a href="#" id="lnkHideMap" style="display:none;">&uarr; Hide map &uarr; </a>
-          <p>Inspired by the Ruby work done by <a href="http://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap">Jamis</a></p>
+        <canvas id="mapCanvas" width="256" height="160"></canvas>
+        <div id="throbber"><img src="res/wait.gif" /><br/>Loading resources...</div>
+        <div id="messages"></div>
+        <!--div id="message_fader"></div-->
+        <canvas id="floorCanvas" width="480" height="320"></canvas>
+        <canvas id="spriteCanvas" width="480" height="320"></canvas>
 
-          <audio id="sndBGM" preload loop>
-             <source src="res/bgm.mp3" type="audio/mpeg" />
-             <source src="res/bgm.ogg" type="audio/ogg" />
-          </audio>
-          <audio id="sndItem" preload>
-             <source src="res/item.mp3" type="audio/mpeg" />
-             <source src="res/item.ogg" type="audio/ogg" />
-          </audio>
-          <audio id="sndStairs" preload>
-             <source src="res/stairs.mp3" type="audio/mpeg" />
-             <source src="res/stairs.ogg" type="audio/ogg" />
-          </audio>
-          <audio id="sndWin" preload>
-             <source src="res/win.mp3" type="audio/mpeg" />
-             <source src="res/win.ogg" type="audio/ogg" />
-          </audio>
+        <audio id="sndBGM" preload loop>
+            <source src="res/bgm.mp3" type="audio/mpeg" />
+            <source src="res/bgm.ogg" type="audio/ogg" />
+        </audio>
+        <audio id="sndItem" preload>
+            <source src="res/item.mp3" type="audio/mpeg" />
+            <source src="res/item.ogg" type="audio/ogg" />
+        </audio>
+        <audio id="sndStairs" preload>
+            <source src="res/stairs.mp3" type="audio/mpeg" />
+            <source src="res/stairs.ogg" type="audio/ogg" />
+        </audio>
+        <audio id="sndWin" preload>
+            <source src="res/win.mp3" type="audio/mpeg" />
+            <source src="res/win.ogg" type="audio/ogg" />
+        </audio>
 
-          <a href="javascript:nosound_onclick();">No music</a>
-       </div>
+        <div id="infoPane">
+            <a href="javascript:nosound_onclick();">No music</a>
+            <p>Inspired by the maze generation work done by <a href="http://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap">Jamis Buck</a></p>
+            <p>Coded by <a href="http://buyog.com">Buyog</a></p>
+            <p>All images and music are owned by <a href="http://nintendo.com">Nintendo</a>; this is just my little tribute.</p>
+        </div>
     </body>
-    <script src="map.js"></script>
+    <script src="mapQuest.js"></script>
     <script>
-        function showMap() {
-            //dojo.stopEvent(e);
-            dojo.byId('textMap').style.display = '';
-            dojo.byId('lnkHideMap').style.display = '';
-            dojo.byId('lnkShowMap').style.display = 'none';
-        }
-
-        function hideMap(e) {
-            //dojo.stopEvent(e);
-            dojo.byId('textMap').style.display = 'none';
-            dojo.byId('lnkHideMap').style.display = 'none';
-            dojo.byId('lnkShowMap').style.display = '';
-        }
-
         dojo.addOnLoad(function init_loader(){
-            // hook up events
-            dojo.connect(dojo.byId("btnNewMap"), "onclick", newMap);
-            dojo.connect(dojo.byId("lnkShowMap"), "onclick", showMap);
-            dojo.connect(dojo.byId("lnkHideMap"), "onclick", hideMap);
-
             window.noSound = false;
             window.sounds = {
                 'bgm'    : dojo.byId('sndBGM'),
@@ -137,14 +113,15 @@
                 'stairs' : dojo.byId('sndStairs'),
                 'win'    : dojo.byId('sndWin')
             }
+            // hack to make background music continuous-loop
             if (typeof sounds.bgm.loop != 'boolean') {
-                sounds.bgm.addEventListener('ended', function() {
+                dojo.connect(sounds.bgm, "onended", function() {
                     this.currentTime = 0;
                     this.play();
-                }, false);
+                });
             }
-            sounds.item.addEventListener('ended', snd_ended);
-            sounds.stairs.addEventListener('ended', snd_ended);
+            dojo.connect(sounds.item, 'onended', snd_ended);
+            dojo.connect(sounds.stairs, 'onended', snd_ended);
 
 
             // before ANYTHING else, see if we can get a canvas context
@@ -153,63 +130,61 @@
                 dojo.require("loc.Preloader");
                 dojo.addOnLoad(preload);
             } else {
-                // hide the "please wait" throbber
-                dojo.style("throbber","display","none")
+                // hide the "please wait" throbber & info pane
+                dojo.style("throbber","display","none");
+                dojo.style("infoPane","display","none");
+                // display an "o noes" message about the user's lack of canvasness
+                dojo.style("messages","top","80px");
+                game_message("Rats! It looks like your browser doesn't support HTML5 Canvas or Audio.\nSorry, I can't help you.\nYou could always try me in a newer browser, though. Even IE9.\nYes, really.");
             }
         }); // end of init_loader()
 
         function preload() {
             window.loader = new loc.Preloader({
               images: {
+                title: "res/title.png",
                 map:   "res/map.png",
-                tiles: "res/underworld_tiles.png",
                 floor: "res/floor.png",
-                items: "res/items.png"
+                tiles: "res/underworld_tiles.png",
+                items: "res/items.png",
+                link:  "res/link.png"
               },
               modules: []
             })
 
             if (loader.ready()) {
-                init_map();
+                init_game();
                 delete window.loader;
             } else {
                 var listener = dojo.subscribe("loc.Preloader.onReady", function() {
                     dojo.unsubscribe(listener);
-                    init_map();
+                    init_game();
                     delete window.loader;
                 });
             }
         } // end of preload()
 
-        function init_map() {
-            window.map = new Map();
-            map.init({
+        function init_game() {
+            window.game = new MapQuest();
+            game.init({
                 mapCanvasID: "mapCanvas",
-                mapImg: window.imageCache.getImage("map"),
                 floorCanvasID: "floorCanvas",
-                floorImg: window.imageCache.getImage("floor"),
-                spriteCanvasID: "spriteCanvas",
-                tileImg: window.imageCache.getImage("tiles"),
-                itemsImg: window.imageCache.getImage("items")
+                spriteCanvasID: "spriteCanvas"
             });
-            dojo.connect(map, "message", map_message);
-            dojo.connect(map, "getItem", map_gotItem);
-            dojo.connect(map, "gameover", map_youWin);
+            dojo.connect(game, "gameStart", game_start);
+            dojo.connect(game, "message", game_message);
+            dojo.connect(game, "getItem", game_gotItem);
+            dojo.connect(game, "gameover", game_over);
 
             // hide the "please wait" throbber
             dojo.style("throbber","display","none")
 
             // hook up the keyboard event handlers for player input
             dojo.connect(window, "onkeydown", handle_keydown);
-            dojo.connect(window, "onkeyup", handle_keyup);
-
-            newMap();
         }
 
-        function newMap() {
-            dojo.byId('messages').value = "";
-            map.generate();
-            dojo.byId('textMap').value = map.dump(map);
+        function game_start() {
+            sounds.bgm.currentTime = 0;
             sounds.bgm.play();
         }
         function nosound_onclick() {
@@ -217,11 +192,11 @@
             window.noSound = true;
         }
 
-        function map_message(msg) {
+        function game_message(msg) {
             dojo.byId('messages').innerHTML = msg.replace(/\n/g,"<p/>");
         }
 
-        function map_gotItem(itm) {
+        function game_gotItem(itm) {
             if (!(noSound)) {
                 sounds.bgm.pause();
                 if (itm)
@@ -240,7 +215,7 @@
             }
         }
 
-        function map_youWin() {
+        function game_over() {
             if (!(noSound)) {
                 sounds.bgm.pause();
                 sounds.win.play();
@@ -253,31 +228,33 @@
             var ev = isIE?event:e;
 
             switch(ev.keyCode){
+                case 13: // ENTER
+                    game.start();
+                    break;
                 case 39: // right
-                    map.east();
+                    game.east();
                     break;
                 case 37: // left
-                    map.west();
+                    game.west();
                     break;
                 case 38: // up
-                    map.north();
+                    game.north();
                     break;
                 case 40: // down
-                    map.south();
+                    game.south();
+                    break;
+                case 88: // X
+                    game.doAction();
                     break;
                 case 188:  // < (up)
-                    if (map.up()) { play_stairs_sound(); }
+                    if (game.up()) { play_stairs_sound(); }
                     break;
                 case 190:  // > (down)
-                    if (map.down()) { play_stairs_sound(); }
+                    if (game.down()) { play_stairs_sound(); }
                     break;
                 default:
                     //console.log(ev.keyCode);
             }
-        }
-        handle_keyup = function(e){
-            var ev = isIE?event:e;
-            //mapper.keyUp(ev.keyCode);
         }
     </script>
 </html>
