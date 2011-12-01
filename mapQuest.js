@@ -675,8 +675,8 @@ var MapQuest = function(){
             spriteCtx.mozImageSmoothingEnabled = false;
         }
 
-        _setState(states.title);
-
+        // go to title screen and wait for input
+        this.reset();
     }
 
     function debugData() {
@@ -849,6 +849,9 @@ var MapQuest = function(){
         }
     }
 
+    function reset() {
+        _setState(states.title);
+    }
 
     // emittable events
     function message(msg) {};
@@ -860,6 +863,7 @@ var MapQuest = function(){
         gameStart: gameStart,
         cheat: cheat,
         init: init,
+        reset: reset,
         goto: goto,
         north: goNorth,
         south: goSouth,

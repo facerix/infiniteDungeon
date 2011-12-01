@@ -6,71 +6,133 @@
     <link rel='stylesheet' href='/code/loc/Canvassa/loc.css'/>
 
     <script data-dojo-config="parseOnLoad: false, isDebug: false, modulePaths:{ 'loc': '/code/loc/Canvassa' }"
-        src="http://o.aolcdn.com/dojo/1.6/dojo/dojo.js"></script>
-        <!--src="/js/dojo-release-1.6.1-src/dojo/dojo.js"></script-->
+        src="/js/dojo-release-1.6.1-src/dojo/dojo.js"></script>
+        <!--src="http://o.aolcdn.com/dojo/1.6/dojo/dojo.js"></script-->
 
     <link rel="stylesheet" href="/fonts/silkscreen/stylesheet.css" type="text/css" charset="utf-8">
     <style type="text/css">
-      h1 {
-        font: 60px/68px 'SilkscreenNormal', Arial, sans-serif;
-        letter-spacing: 0;
-        margin: 0; padding: 0;
-        /*text-align: center;*/
-        /*margin-left: 70px;*/
-        color: #ec9b00;
-        text-shadow: 1px 1px rgba(255,128,0,.7),
-            2px 2px rgba(0,0,0,.7),
-            3px 3px rgba(0,0,0,.7),
-            4px 4px rgba(0,0,0,.7),
-            5px 5px rgba(0,0,0,.7);
-      }
+        h1 {
+            font: 60px/68px 'SilkscreenNormal', Arial, sans-serif;
+            letter-spacing: 0;
+            margin: 0; padding: 0;
+            /*text-align: center;*/
+            color: #ec9b00;
+        }
+        h1 .left {
+            text-shadow: 1px 1px rgba(255,128,0,.7),
+                2px 2px rgba(0,0,0,.7),
+                3px 3px rgba(0,0,0,.7),
+                4px 4px rgba(0,0,0,.7),
+                5px 5px rgba(0,0,0,.7);
+        }
+        h1 .right {
+            text-shadow: -1px 1px rgba(255,128,0,.7),
+                -2px 2px rgba(0,0,0,.7),
+                -3px 3px rgba(0,0,0,.7),
+                -4px 4px rgba(0,0,0,.7),
+                -5px 5px rgba(0,0,0,.7);
+        }
 
-      canvas {
-        border: 6px double black;
-      }
-      #mapCanvas {
-        top: 80px;
-        left: 20px;
-      }
 
-      #messages {
-        font: 8pt 'SilkscreenNormal', Arial, sans-serif;
-        border: 6px double black;
-        background-color: black;
-        color: white;
+        canvas {
+            border: 6px double black;
+        }
+        #mapCanvas {
+            top: 80px;
+            left: 20px;
+        }
 
-        position: absolute;
-        top: 260px; left: 20px;
-        height: 136px; width: 252px;
-      }
-      #message_fader {
-        border: none;
+        #messages {
+            font: 8pt 'SilkscreenNormal', Arial, sans-serif;
+            border: 6px double black;
+            background-color: black;
+            color: white;
 
-        position: absolute;
-        top: 260px; left: 20px;
-        height: 148px; width: 264px;
+            position: absolute;
+            top: 260px; left: 20px;
+            height: 136px; width: 252px;
+        }
+        #message_fader {
+            border: none;
 
-        background-color: transparent;
-        background-image:    -moz-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,1));
-        background-image:      -o-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,1));
-        background-image:        -webkit-gradient(linear,left top,left bottom,color-stop(0, rgba(0,0,0,0)),color-stop(1, rgba(0,0,0,1)));
-        background-image: -webkit-linear-gradient(rgba(0,0,0,0), rgba(0,0,0,1));
-        background-image:         linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0));
-      }
+            position: absolute;
+            top: 260px; left: 20px;
+            height: 148px; width: 264px;
 
-      #floorCanvas, #spriteCanvas {
-        top: 80px;
-        left: 296px;
-      }
+            background-color: transparent;
+            background-image:    -moz-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,1));
+            background-image:      -o-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,1));
+            background-image:        -webkit-gradient(linear,left top,left bottom,color-stop(0, rgba(0,0,0,0)),color-stop(1, rgba(0,0,0,1)));
+            background-image: -webkit-linear-gradient(rgba(0,0,0,0), rgba(0,0,0,1));
+            background-image:         linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0));
+        }
 
-      #infoPane {
-        position: relative;
-        top: 330px;
-      }
+        #floorCanvas, #spriteCanvas {
+            top: 80px;
+            left: 296px;
+        }
+
+        .commands {
+            border: 6px double black;
+            margin: 0; padding: 0;
+
+            position: absolute;
+            left: 20px; top: 420px;
+            width: 756px;
+
+            font: 12pt 'SilkscreenNormal', Arial, sans-serif;
+            font-weight: bold;
+        }
+        .commands button {
+            padding: 0; margin: 0;
+            height: 30px;
+
+            border: 1px solid #333;
+            text-align: center;
+            text-decoration: none;
+
+            background-color: #C0C0C0;
+            background-image: -webkit-gradient(linear, left top, left bottom, from(#C0C0C0), to(#A0A0A0));
+            background-image: -webkit-linear-gradient(top, #C0C0C0, #A0A0A0);
+            background-image:    -moz-linear-gradient(top, #C0C0C0, #A0A0A0);
+            background-image:     -ms-linear-gradient(top, #C0C0C0, #A0A0A0);
+            background-image:      -o-linear-gradient(top, #C0C0C0, #A0A0A0);
+            background-image:         linear-gradient(top, #C0C0C0, #A0A0A0);
+                      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#C0C0C0', EndColorStr='#A0A0A0');
+
+               -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+                    border-radius: 3px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            padding: 10px;
+
+            background-color: #DDDD66;
+            background-image: -webkit-gradient(linear, left top, left bottom, from(#DDDD66), to(#EC9B00));
+            background-image: -webkit-linear-gradient(top, #DDDD66, #EC9B00);
+            background-image:    -moz-linear-gradient(top, #DDDD66, #EC9B00);
+            background-image:     -ms-linear-gradient(top, #DDDD66, #EC9B00);
+            background-image:      -o-linear-gradient(top, #DDDD66, #EC9B00);
+            background-image:         linear-gradient(top, #DDDD66, #EC9B00);
+                      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#DDDD66', EndColorStr='#EC9B00');
+
+
+            border-top: 1px solid #CC8500;
+          -webkit-box-shadow: 0px 0px -4px #CC8500;
+             -moz-box-shadow: 0px 0px -4px #CC8500;
+                  box-shadow: 0px 0px -4px #CC8500;
+        }
+        footer .sig { float: left; }
+        footer .copy { float: right; }
     </style>
     </head>
     <body>
-        <h1>Infinite Dungeon!</h1>
+        <header>
+            <h1><span class='left'>Infinite</span> <span class='right'>Dungeon!</span></h1>
+        </header>
 
         <canvas id="mapCanvas" width="256" height="160"></canvas>
         <div id="throbber"><img src="res/wait.gif" /><br/>Loading resources...</div>
@@ -96,12 +158,16 @@
             <source src="res/win.ogg" type="audio/ogg" />
         </audio>
 
-        <div id="infoPane">
-            <a href="javascript:nosound_onclick();">No music</a>
-            <p>Inspired by the maze generation work done by <a href="http://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap">Jamis Buck</a></p>
-            <p>Coded by <a href="http://buyog.com">Buyog</a></p>
-            <p>All images and music are owned by <a href="http://nintendo.com">Nintendo</a>; this is just my little tribute.</p>
+        <div class="commands">
+            <button onclick="nosound_onclick();">Mute</button>
+            <button onclick="game.reset();">Reset</button>
         </div>
+        <footer id="infoPane">
+            <span rel="me" class="sig">Coded by <a href="http://buyog.com">Buyog</a>
+                (Inspired by the maze generation work done by
+                <a href="http://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap">Jamis Buck</a>)</span>
+            <span class="copy">All images and music are owned by <a href="http://nintendo.com">Nintendo</a>; this is just my little tribute.</span>
+        </footer>
     </body>
     <script src="mapQuest.js"></script>
     <script>
